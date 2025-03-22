@@ -1,0 +1,41 @@
+version: "3.7"
+services:
+  app:
+    image: ${DOCKER_TARGET:-php_8_3-sqlite-dev}
+    container_name: ${DOCKER_APP_NAME:-test}_app
+    restart: unless-stopped
+    environment:
+        PHP_FPM_POOL_NAME: fpm_pool_${DOCKER_APP_NAME:-test}_app
+    env_file:
+        - .env
+        - ./backend/.env
+    ports:
+        - ${WS_PORT:-8080}:80
+    volumes:
+      - ./backend:/var/www
+      - ./sqlite:/var/www/db
+      - ./docker/php/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+#  db:
+#    image: mysql:8.0
+#    container_name: ${DOCKER_APP_NAME:-test}_db
+#    restart: unless-stopped
+#    ports:
+#        - 33066:3306
+#    environment:
+#      MYSQL_DATABASE: ${DB_DATABASE}
+#      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+#      MYSQL_PASSWORD: ${DB_PASSWORD}
+#      MYSQL_USER: ${DB_USERNAME}
+
+  nginx:
+    image: nginx:alpine
+    container_name: ${DOCKER_APP_NAME:-test}_nginx
+    restart: unless-stopped
+    env_file:
+        - .env
+    ports:
+      - ${DOCKER_NGINX_80:-80}:80
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx:/etc/nginx/conf.d/
