@@ -37,5 +37,5 @@ services:
     ports:
       - ${DOCKER_NGINX_80:-80}:80
     volumes:
-      - ./:/var/www
+      - ./backend:/var/www
       - ./docker/nginx:/etc/nginx/conf.d/
