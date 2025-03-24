@@ -6,11 +6,12 @@ use App\Message\EntityCreate;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-final class EntityCreateHandler
+final class EntityCreateHandler extends BaseEntityHendler
 {
     public function __invoke(EntityCreate $message): void
     {
         $entity = $message->getEntity();
-        $a = 1;
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 }

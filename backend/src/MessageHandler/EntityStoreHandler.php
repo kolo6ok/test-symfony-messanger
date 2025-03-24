@@ -6,7 +6,7 @@ use App\Message\EntityStore;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-final class EntityStoreHandler
+final class EntityStoreHandler extends BaseEntityHendler
 {
     public function __invoke(EntityStore $message): void
     {
