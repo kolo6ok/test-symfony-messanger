@@ -16,6 +16,7 @@ class Book implements EntityDispatchingInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['books','booksAndAuthors'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]

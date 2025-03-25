@@ -78,7 +78,7 @@ class Author implements EntityDispatchingInterface
         // TODO: Implement fillFromEntity() method.
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->name;
     }
