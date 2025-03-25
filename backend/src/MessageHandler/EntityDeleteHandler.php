@@ -10,6 +10,22 @@ final class EntityDeleteHandler extends BaseEntityHendler
 {
     public function __invoke(EntityDelete $message): void
     {
-        // do something with your message
+        try {
+            $this->entityManager->remove($message->getEntity());
+        } catch (\Exception $e) {
+            $this->errors[] = $e->getMessage();
+        }
+        $this->sendViaWS();
     }
+
+    protected function getTitle(): string
+    {
+        $title = 'Delete success!';
+        if ($this->errors) {
+            $title = array_pop($this->errors);
+        }
+
+        return $title;
+    }
+
 }

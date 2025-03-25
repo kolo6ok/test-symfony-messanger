@@ -34,20 +34,12 @@ RUN docker-php-source extract \
 ADD ./docker/php/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-#
-#ENV XDG_CONFIG_HOME "/usr/local/nvm"
-#ENV NVM_DIR "/usr/local/nvm"
-#
+
 RUN useradd -G www-data,root -u $uid -m -d /home/$user -s /bin/bash $user
 RUN mkdir -p /home/$user/.composer \
     && chown -R $user:$user /home/$user /var/www
 
 USER $user
-
-#RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
-#RUN . "$NVM_DIR/nvm.sh" \
-#    && . "$NVM_DIR/bash_completion" \
-#    && nvm install --lts
 
 WORKDIR /var/www
 

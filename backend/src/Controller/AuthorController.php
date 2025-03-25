@@ -2,11 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Author;
 use App\Entity\Book;
 use App\Message\EntityCreate;
 use App\Message\EntityDelete;
 use App\Message\EntityStore;
-use App\Repository\BookRepository;
+use App\Repository\AuthorRepository;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,14 +17,14 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\AbstractObjectNormalizer;
 
-#[Route('/books', name: 'book_', format: 'json')]
-class BookController extends AbstractController
+#[Route('/authors', name: 'author_', format: 'json')]
+class AuthorController extends AbstractController
 {
     use DispatchAndResponse;
 
 
     public function __construct(
-        readonly private BookRepository $repository,
+        readonly private AuthorRepository $repository,
         readonly private MessageBusInterface $messageBus
     )
     {
@@ -35,7 +36,7 @@ class BookController extends AbstractController
         return $this->json(
             $this->repository->findAll(),
             context: [
-                'groups' => ['books','booksAndAuthors'],
+                'groups' => ['authors'],
                 AbstractObjectNormalizer::ENABLE_MAX_DEPTH => true,
                 AbstractNormalizer::CIRCULAR_REFERENCE_LIMIT => 3
             ]
@@ -43,37 +44,36 @@ class BookController extends AbstractController
     }
 
     #[Route('/{id}', name: 'get', methods: ['GET'])]
-    public function get(#[MapEntity] Book $book): JsonResponse
+    public function get(#[MapEntity] Author $author): JsonResponse
     {
         return $this->json(
-            $book,
+            $author,
             context: [
-                'groups' => ['books','booksAndAuthors'],
-                AbstractObjectNormalizer::ENABLE_MAX_DEPTH => true,
-                AbstractNormalizer::CIRCULAR_REFERENCE_LIMIT => 3
-            ]
-        );
+            'groups' => ['authors'],
+            AbstractObjectNormalizer::ENABLE_MAX_DEPTH => true,
+            AbstractNormalizer::CIRCULAR_REFERENCE_LIMIT => 3
+        ]);
     }
 
     #[Route('', name: 'create', methods: ['POST'])]
-    public function create( #[MapRequestPayload] Book $book): JsonResponse
+    public function create( #[MapRequestPayload] Author $author): JsonResponse
     {
-        $message = new EntityCreate($book);
+        $message = new EntityCreate($author);
         return $this->dispatchAndResponse($message);
     }
 
     #[Route('/{id}', name: 'store', methods: ['PUT'])]
-    public function store(#[MapEntity] Book $book, #[MapRequestPayload] Book $dto): JsonResponse
+    public function store(#[MapEntity] Author $author, #[MapRequestPayload] Author $dto): JsonResponse
     {
-        $book->fillFromEntity($dto);
-        $message = new EntityStore($book);
+        $author->fillFromEntity($dto);
+        $message = new EntityStore($author);
         return $this->dispatchAndResponse($message);
     }
 
     #[Route('/{id}', name: 'delete', methods: ['POST'])]
-    public function delete(#[MapEntity] Book $book): JsonResponse
+    public function delete(#[MapEntity] Author $author): JsonResponse
     {
-        $message = new EntityDelete($book);
+        $message = new EntityDelete($author);
         return $this->dispatchAndResponse($message);
     }
 

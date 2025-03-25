@@ -28,6 +28,13 @@ services:
 #      MYSQL_PASSWORD: ${DB_PASSWORD}
 #      MYSQL_USER: ${DB_USERNAME}
 
+  web:
+    image: node:lts
+    container_name: ${DOCKER_APP_NAME:-test}_web
+    restart: unless-stopped
+    volumes:
+      - ./front:/var/www
+
   nginx:
     image: nginx:alpine
     container_name: ${DOCKER_APP_NAME:-test}_nginx

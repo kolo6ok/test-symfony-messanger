@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BookRepository::class)]
@@ -19,12 +20,15 @@ class Book implements EntityDispatchingInterface
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups(['books','booksAndAuthors'])]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(['books', 'booksAndAuthors'])]
     private ?string $description = null;
 
-    #[ORM\ManyToMany(targetEntity: Author::class, mappedBy: 'books')]
+    #[ORM\ManyToMany(targetEntity: Author::class, mappedBy: 'books', cascade: ['persist'])]
+    #[Groups(['books', 'booksAndAuthors'])]
     private Collection $authors;
 
     public function __construct()
@@ -86,5 +90,14 @@ class Book implements EntityDispatchingInterface
         }
 
         return $this;
+    }
+
+    public function fillFromEntity(EntityDispatchingInterface $entity): void
+    {
+        foreach ($this as $name => $value) {
+            if (isset($entity->{$name})) {
+                $this->{$name} = $entity->{$name};
+            }
+        }
     }
 }

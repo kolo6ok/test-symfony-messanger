@@ -11,4 +11,9 @@ class BaseEntityMessage implements EntityEventMessageInterface
     {
     }
 
+    public function getEntity(): EntityDispatchingInterface
+    {
+        return $this->entity;
+    }
+
 }
